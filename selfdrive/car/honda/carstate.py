@@ -65,7 +65,7 @@ def get_can_signals(CP, gearbox_msg="GEARBOX"):
     ("STEER_MOTOR_TORQUE", 0), # TODO: not on every car
   ]
 
-  if CP.carFingerprint == CAR.ODYSSEY_CHN:
+  if CP.carFingerprint in (CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
     checks += [
       ("SCM_FEEDBACK", 25),
       ("SCM_BUTTONS", 50),
@@ -117,8 +117,8 @@ def get_can_signals(CP, gearbox_msg="GEARBOX"):
                 ("CRUISE_SPEED_OFFSET", "CRUISE_PARAMS", 0)]
     checks += [("STANDSTILL", 50)]
 
-    if CP.carFingerprint == CAR.ODYSSEY_CHN:
-      checks += [("CRUISE_PARAMS", 10)]
+    if CP.carFingerprint in (CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
+      checks.append(("CRUISE_PARAMS", 10))
     else:
       checks += [("CRUISE_PARAMS", 50)]
   if CP.carFingerprint in (CAR.ACCORD, CAR.ACCORDH, CAR.INSIGHT):
@@ -184,7 +184,7 @@ def get_can_signals(CP, gearbox_msg="GEARBOX"):
     checks += [
       ("GAS_PEDAL_2", 0),  # TODO: fix this freq, seems this signal isn't present at all on some models
     ]
-  elif CP.carFingerprint == CAR.ODYSSEY_CHN:
+  elif CP.carFingerprint in (CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
     signals += [("MAIN_ON", "SCM_BUTTONS", 0),
                 ("EPB_STATE", "EPB_STATUS", 0)]
     checks += [("EPB_STATUS", 50)]
@@ -299,7 +299,7 @@ class CarState(CarStateBase):
                                   CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_HYBRID, CAR.INSIGHT, CAR.ACURA_RDX_3G):
       self.park_brake = cp.vl["EPB_STATUS"]["EPB_STATE"] != 0
       main_on = cp.vl["SCM_FEEDBACK"]["MAIN_ON"]
-    elif self.CP.carFingerprint == CAR.ODYSSEY_CHN:
+    elif self.CP.carFingerprint in (CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
       self.park_brake = cp.vl["EPB_STATUS"]["EPB_STATE"] != 0
       main_on = cp.vl["SCM_BUTTONS"]["MAIN_ON"]
     else:
