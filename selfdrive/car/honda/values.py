@@ -40,6 +40,7 @@ class CAR:
   JADE = "HONDA JADE 2017"
   ODYSSEY = "HONDA ODYSSEY 2018 EX-L"
   ODYSSEY_CHN = "HONDA ODYSSEY 2019 EXCLUSIVE CHN"
+  ODYSSEY_HYBRID = "HONDA ODYSSEY HYBRID CHN 2022"
   ACURA_RDX = "ACURA RDX 2018 ACURAWATCH PLUS"
   ACURA_RDX_3G = "ACURA RDX 2020 TECH"
   PILOT = "HONDA PILOT 2017 TOURING"
@@ -167,6 +168,7 @@ for c in FINGERPRINTS:
 
 # TODO: Figure out what is relevant
 FW_VERSIONS = {
+  CAR.ODYSSEY_HYBRID: {(Ecu.esp, 0xfff, None): [b'\x00']},
   CAR.ACCORD: {
     (Ecu.programmedFuelInjection, 0x18da10f1, None): [
       b'37805-6A0-A640\x00\x00',
@@ -1063,6 +1065,7 @@ DBC = {
   CAR.JADE: dbc_dict('honda_hrv_touring_2019_can_generated', 'acura_ilx_2016_nidec'),
   CAR.ODYSSEY: dbc_dict('honda_odyssey_exl_2018_generated', 'acura_ilx_2016_nidec'),
   CAR.ODYSSEY_CHN: dbc_dict('honda_odyssey_extreme_edition_2018_china_can_generated', 'acura_ilx_2016_nidec'),
+  CAR.ODYSSEY_HYBRID: dbc_dict('honda_odyssey_hybrid_2022_china_can_generated', 'acura_ilx_2016_nidec'),
   CAR.PILOT: dbc_dict('honda_pilot_touring_2017_can_generated', 'acura_ilx_2016_nidec'),
   CAR.PILOT_2019: dbc_dict('honda_pilot_touring_2017_can_generated', 'acura_ilx_2016_nidec'),
   CAR.RIDGELINE: dbc_dict('honda_ridgeline_black_edition_2017_can_generated', 'acura_ilx_2016_nidec'),
@@ -1088,6 +1091,7 @@ STEER_THRESHOLD = {
   CAR.JADE: 1200,
   CAR.ODYSSEY: 1200,
   CAR.ODYSSEY_CHN: 1200,
+  CAR.ODYSSEY_HYBRID: 1200,
   CAR.PILOT: 1200,
   CAR.PILOT_2019: 1200,
   CAR.RIDGELINE: 1200,
@@ -1113,6 +1117,7 @@ SPEED_FACTOR = {
   CAR.JADE: 1.025,
   CAR.ODYSSEY: 1.,
   CAR.ODYSSEY_CHN: 1.,
+  CAR.ODYSSEY_HYBRID: 1.,
   CAR.PILOT: 1.,
   CAR.PILOT_2019: 1.,
   CAR.RIDGELINE: 1.,
