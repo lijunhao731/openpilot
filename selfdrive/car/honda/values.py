@@ -79,6 +79,7 @@ class CAR:
   HRV = "HONDA HRV 2019"
   ODYSSEY = "HONDA ODYSSEY 2018"
   ODYSSEY_CHN = "HONDA ODYSSEY CHN 2019"
+  ODYSSEY_HYBRID = "HONDA ODYSSEY HYBRID CHN 2022"
   ACURA_RDX = "ACURA RDX 2018"
   ACURA_RDX_3G = "ACURA RDX 2020"
   PILOT = "HONDA PILOT 2017"
@@ -91,6 +92,7 @@ class CAR:
 
 FW_VERSIONS = {
   CAR.JADE: {(Ecu.esp, 0xfff, None): [b'\x00']},
+  CAR.ODYSSEY_HYBRID: {(Ecu.esp, 0xfff, None): [b'\x00']},
   CAR.ACCORD: {
     (Ecu.programmedFuelInjection, 0x18da10f1, None): [
       b'37805-6A0-8720\x00\x00',
@@ -1375,6 +1377,7 @@ DBC = {
   CAR.HRV: dbc_dict('honda_fit_ex_2018_can_generated', 'acura_ilx_2016_nidec'),
   CAR.ODYSSEY: dbc_dict('honda_odyssey_exl_2018_generated', 'acura_ilx_2016_nidec'),
   CAR.ODYSSEY_CHN: dbc_dict('honda_odyssey_extreme_edition_2018_china_can_generated', 'acura_ilx_2016_nidec'),
+  CAR.ODYSSEY_HYBRID: dbc_dict('honda_odyssey_hybrid_2022_china_can_generated', 'acura_ilx_2016_nidec'),
   CAR.PILOT: dbc_dict('honda_pilot_touring_2017_can_generated', 'acura_ilx_2016_nidec'),
   CAR.PILOT_2019: dbc_dict('honda_pilot_touring_2017_can_generated', 'acura_ilx_2016_nidec'),
   CAR.PASSPORT: dbc_dict('honda_pilot_touring_2017_can_generated', 'acura_ilx_2016_nidec'),
@@ -1392,7 +1395,7 @@ STEER_THRESHOLD = {
 
 HONDA_NIDEC_ALT_PCM_ACCEL = set([CAR.ODYSSEY])
 HONDA_NIDEC_ALT_SCM_MESSAGES = set([CAR.ACURA_ILX, CAR.ACURA_RDX, CAR.CRV, CAR.CRV_EU, CAR.FIT, CAR.FREED, CAR.HRV, CAR.ODYSSEY_CHN,
-                                    CAR.PILOT, CAR.PILOT_2019, CAR.PASSPORT, CAR.RIDGELINE])
+                                    CAR.ODYSSEY_HYBRID, CAR.PILOT, CAR.PILOT_2019, CAR.PASSPORT, CAR.RIDGELINE])
 HONDA_BOSCH = set([CAR.ACCORD, CAR.ACCORDH, CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_5G,
                    CAR.CRV_HYBRID, CAR.INSIGHT, CAR.ACURA_RDX_3G, CAR.HONDA_E])
 HONDA_BOSCH_ALT_BRAKE_SIGNAL = set([CAR.ACCORD, CAR.CRV_5G, CAR.ACURA_RDX_3G])

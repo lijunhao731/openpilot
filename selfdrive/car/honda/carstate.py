@@ -57,7 +57,7 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
     ("STEER_MOTOR_TORQUE", 0), # TODO: not on every car
   ]
 
-  if CP.carFingerprint == CAR.ODYSSEY_CHN:
+  if CP.carFingerprint in (CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
     checks += [
       ("SCM_FEEDBACK", 25),
       ("SCM_BUTTONS", 50),
@@ -66,6 +66,17 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
     checks += [
       ("SCM_FEEDBACK", 10),
       ("SCM_BUTTONS", 25),
+    ]
+  
+  if CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+    signals += [
+      ("IMPERIAL_UNIT", "CAR_SPEED"), 
+      ("BRAKE_ERROR_1", "BRAKE_ERROR"), 
+      ("BRAKE_ERROR_2", "BRAKE_ERROR")
+    ]
+    checks += [
+      ("CAR_SPEED", 10),
+      ("BRAKE_ERROR", 100),
     ]
 
   if CP.carFingerprint in (CAR.CRV_HYBRID, CAR.CIVIC_BOSCH_DIESEL, CAR.ACURA_RDX_3G, CAR.HONDA_E):
@@ -108,8 +119,11 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
     signals += [("CRUISE_SPEED_PCM", "CRUISE", 0),
                 ("CRUISE_SPEED_OFFSET", "CRUISE_PARAMS", 0)]
 
-    if CP.carFingerprint == CAR.ODYSSEY_CHN:
-      checks += [("CRUISE_PARAMS", 10)]
+    if CP.carFingerprint == CAR.ODYSSEY_HYBRID:
+      signals += [("IMPERIAL_UNIT", "CAR_SPEED")]
+      checks += [("CAR_SPEED", 10)]
+    if CP.carFingerprint in (CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
+      checks.append(("CRUISE_PARAMS", 10))
     else:
       checks += [("CRUISE_PARAMS", 50)]
 
@@ -142,7 +156,7 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
       ("HUD_SETTING", 50),
       ("EPB_STATUS", 50),
     ]
-  elif CP.carFingerprint in (CAR.ODYSSEY, CAR.ODYSSEY_CHN):
+  elif CP.carFingerprint in (CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
     signals += [("EPB_STATUS", 0)]
     checks += [("EPB_STATUS", 50)]
 
@@ -153,11 +167,18 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
     checks.append(("GAS_SENSOR", 50))
 
   if CP.openpilotLongitudinalControl:
-    signals += [
-      ("BRAKE_ERROR_1", "STANDSTILL", 1),
-      ("BRAKE_ERROR_2", "STANDSTILL", 1)
-    ]
-    checks += [("STANDSTILL", 50)]
+    if CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+      signals += [
+        ("BRAKE_ERROR_1", "BRAKE_ERROR", 1), 
+        ("BRAKE_ERROR_2", "BRAKE_ERROR", 1)
+      ]
+      checks.append(("BRAKE_ERROR", 100))
+    else:
+      signals += [
+        ("BRAKE_ERROR_1", "STANDSTILL", 1),
+        ("BRAKE_ERROR_2", "STANDSTILL", 1)
+      ]
+      checks.append(("STANDSTILL", 50))
 
   return signals, checks
 
@@ -234,6 +255,8 @@ class CarState(CarStateBase):
       # dp - Rick - ignore check for crv_hybrid, loveloveses has issue with this signal.
       if self.CP.carFingerprint in (CAR.CRV_HYBRID):
         self.brake_error = 0
+      if self.CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+        self.brake_error = cp.vl["BRAKE_ERROR"]["BRAKE_ERROR_1"] or cp.vl["BRAKE_ERROR"]["BRAKE_ERROR_2"]
       else:
         self.brake_error = cp.vl["STANDSTILL"]["BRAKE_ERROR_1"] or cp.vl["STANDSTILL"]["BRAKE_ERROR_2"]
     ret.espDisabled = cp.vl["VSA_STATUS"]["ESP_DISABLED"] != 0
@@ -271,7 +294,7 @@ class CarState(CarStateBase):
     #dp
     self.engineRPM = cp.vl["POWERTRAIN_DATA"]['ENGINE_RPM']
 
-    if self.CP.carFingerprint in (CAR.CIVIC, CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.CRV_5G, CAR.ACCORD, CAR.ACCORDH, CAR.CIVIC_BOSCH,
+    if self.CP.carFingerprint in (CAR.CIVIC, CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID, CAR.CRV_5G, CAR.ACCORD, CAR.ACCORDH, CAR.CIVIC_BOSCH,
                                   CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_HYBRID, CAR.INSIGHT, CAR.ACURA_RDX_3G, CAR.HONDA_E):
       self.park_brake = cp.vl["EPB_STATUS"]["EPB_STATE"] != 0
     else:
@@ -334,7 +357,7 @@ class CarState(CarStateBase):
     # TODO: discover the CAN msg that has the imperial unit bit for all other cars
     if self.CP.carFingerprint in (CAR.CIVIC, ):
       self.is_metric = not cp.vl["HUD_SETTING"]["IMPERIAL_UNIT"]
-    elif self.CP.carFingerprint in HONDA_BOSCH:
+    elif self.CP.carFingerprint in (HONDA_BOSCH | {CAR.ODYSSEY_HYBRID,}):
       self.is_metric = not cp.vl["CAR_SPEED"]["IMPERIAL_UNIT"]
     else:
       self.is_metric = False
