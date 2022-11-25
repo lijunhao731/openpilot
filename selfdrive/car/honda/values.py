@@ -91,6 +91,7 @@ class CAR:
 
 FW_VERSIONS = {
   CAR.JADE: {(Ecu.esp, 0xfff, None): [b'\x00']},
+  CAR.ODYSSEY_HYBRID: {(Ecu.esp, 0xfff, None): [b'\x00']},
   CAR.ACCORD: {
     (Ecu.programmedFuelInjection, 0x18da10f1, None): [
       b'37805-6A0-8720\x00\x00',
