@@ -75,6 +75,17 @@ def get_can_signals(CP, gearbox_msg="GEARBOX"):
       ("SCM_FEEDBACK", 10),
       ("SCM_BUTTONS", 25),
     ]
+  
+  if CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+    signals += [
+      ("IMPERIAL_UNIT", "CAR_SPEED"), 
+      ("BRAKE_ERROR_1", "BRAKE_ERROR"), 
+      ("BRAKE_ERROR_2", "BRAKE_ERROR")
+    ]
+    checks += [
+      ("CAR_SPEED", 10),
+      ("BRAKE_ERROR", 100),
+    ]
 
   if CP.carFingerprint in (CAR.CRV_HYBRID, CAR.CIVIC_BOSCH_DIESEL, CAR.ACURA_RDX_3G):
     checks += [
@@ -262,7 +273,10 @@ class CarState(CarStateBase):
     if not self.CP.openpilotLongitudinalControl:
       self.brake_error = 0
     else:
-      self.brake_error = cp.vl["STANDSTILL"]["BRAKE_ERROR_1"] or cp.vl["STANDSTILL"]["BRAKE_ERROR_2"]
+      if CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+        self.brake_error = cp.vl["BRAKE_ERROR"]["BRAKE_ERROR_1"] or cp.vl["BRAKE_ERROR"]["BRAKE_ERROR_2"]
+      else:
+        self.brake_error = cp.vl["STANDSTILL"]["BRAKE_ERROR_1"] or cp.vl["STANDSTILL"]["BRAKE_ERROR_2"]
     ret.espDisabled = cp.vl["VSA_STATUS"]["ESP_DISABLED"] != 0
 
     speed_factor = SPEED_FACTOR[self.CP.carFingerprint]
@@ -369,6 +383,8 @@ class CarState(CarStateBase):
     # TODO: discover the CAN msg that has the imperial unit bit for all other cars
     if self.CP.carFingerprint in [CAR.JADE]:
       self.is_metric = True
+    elif self.CP.carFingerprint in (HONDA_BOSCH + (CAR.ODYSSEY_HYBRID,)):
+      self.is_metric = not cp.vl["CAR_SPEED"]["IMPERIAL_UNIT"]
     else:
       self.is_metric = not cp.vl["HUD_SETTING"]["IMPERIAL_UNIT"] if self.CP.carFingerprint in (CAR.CIVIC) else False
 
