@@ -70,6 +70,17 @@ def get_can_signals(CP):
       ("SCM_FEEDBACK", 10),
       ("SCM_BUTTONS", 25),
     ]
+  
+  if CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+    signals += [
+      ("IMPERIAL_UNIT", "CAR_SPEED"), 
+      ("BRAKE_ERROR_1", "BRAKE_ERROR"), 
+      ("BRAKE_ERROR_2", "BRAKE_ERROR")
+    ]
+    checks += [
+      ("CAR_SPEED", 10),
+      ("BRAKE_ERROR", 100),
+    ]
 
   if CP.carFingerprint in (CAR.CRV_HYBRID, CAR.CIVIC_BOSCH_DIESEL, CAR.ACURA_RDX_3G):
     checks += [
@@ -226,8 +237,11 @@ class CarState(CarStateBase):
     if not self.CP.openpilotLongitudinalControl:
       self.brake_error = 0
     else:
-      self.brake_error = cp.vl["STANDSTILL"]['BRAKE_ERROR_1'] or cp.vl["STANDSTILL"]['BRAKE_ERROR_2']
-    ret.espDisabled = cp.vl["VSA_STATUS"]['ESP_DISABLED'] != 0
+      if CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+        self.brake_error = cp.vl["BRAKE_ERROR"]["BRAKE_ERROR_1"] or cp.vl["BRAKE_ERROR"]["BRAKE_ERROR_2"]
+      else:
+        self.brake_error = cp.vl["STANDSTILL"]["BRAKE_ERROR_1"] or cp.vl["STANDSTILL"]["BRAKE_ERROR_2"]
+    ret.espDisabled = cp.vl["VSA_STATUS"]["ESP_DISABLED"] != 0
 
     speed_factor = SPEED_FACTOR[self.CP.carFingerprint]
     ret.wheelSpeeds.fl = cp.vl["WHEEL_SPEEDS"]['WHEEL_SPEED_FL'] * CV.KPH_TO_MS * speed_factor
@@ -335,7 +349,12 @@ class CarState(CarStateBase):
         ret.brakePressed = True
 
     # TODO: discover the CAN msg that has the imperial unit bit for all other cars
-    self.is_metric = not cp.vl["HUD_SETTING"]['IMPERIAL_UNIT'] if self.CP.carFingerprint in (CAR.CIVIC) else False
+    if self.CP.carFingerprint in [CAR.JADE]:
+      self.is_metric = True
+    elif self.CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+      self.is_metric = not cp.vl["CAR_SPEED"]["IMPERIAL_UNIT"]
+    else:
+      self.is_metric = not cp.vl["HUD_SETTING"]['IMPERIAL_UNIT'] if self.CP.carFingerprint in (CAR.CIVIC) else False
 
     if self.CP.carFingerprint in HONDA_BOSCH:
       ret.stockAeb = bool(cp_cam.vl["ACC_CONTROL"]["AEB_STATUS"] and cp_cam.vl["ACC_CONTROL"]["ACCEL_COMMAND"] < -1e-5)
