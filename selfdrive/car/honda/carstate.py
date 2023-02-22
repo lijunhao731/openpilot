@@ -67,17 +67,6 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
       ("SCM_FEEDBACK", 10),
       ("SCM_BUTTONS", 25),
     ]
-  
-  if CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
-    signals += [
-      ("IMPERIAL_UNIT", "CAR_SPEED"), 
-      ("BRAKE_ERROR_1", "BRAKE_ERROR"), 
-      ("BRAKE_ERROR_2", "BRAKE_ERROR")
-    ]
-    checks += [
-      ("CAR_SPEED", 10),
-      ("BRAKE_ERROR", 100),
-    ]
 
   if CP.carFingerprint in (CAR.CRV_HYBRID, CAR.CIVIC_BOSCH_DIESEL, CAR.ACURA_RDX_3G, CAR.HONDA_E):
     checks += [
@@ -120,7 +109,7 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
                 ("CRUISE_SPEED_OFFSET", "CRUISE_PARAMS", 0)]
 
     if CP.carFingerprint == CAR.ODYSSEY_HYBRID:
-      signals += [("IMPERIAL_UNIT", "CAR_SPEED")]
+      signals += [("IMPERIAL_UNIT", "CAR_SPEED", 0)]
       checks += [("CAR_SPEED", 10)]
     if CP.carFingerprint in (CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
       checks.append(("CRUISE_PARAMS", 10))
@@ -157,7 +146,7 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
       ("EPB_STATUS", 50),
     ]
   elif CP.carFingerprint in (CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
-    signals += [("EPB_STATUS", 0)]
+    signals += [("EPB_STATE", "EPB_STATUS", 0)]
     checks += [("EPB_STATUS", 50)]
 
   # add gas interceptor reading if we are using it
