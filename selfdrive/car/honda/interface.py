@@ -245,6 +245,16 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.82
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.28], [0.08]]
 
+    elif candidate == CAR.ODYSSEY_HYBRID:
+      stop_and_go = True
+      ret.mass = 1889. + STD_CARGO_KG
+      ret.wheelbase = 2.90
+      ret.centerToFront = ret.wheelbase * 0.41  # from CAR.ODYSSEY
+      ret.steerRatio = 14.35
+      ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 32767], [0, 32767]]  # TODO: determine if there is a dead zone at the top end
+      tire_stiffness_factor = 0.82
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.28], [0.08]]
+
     elif candidate in (CAR.PILOT, CAR.PILOT_2019):
       stop_and_go = False
       ret.mass = 4204. * CV.LB_TO_KG + STD_CARGO_KG  # average weight
