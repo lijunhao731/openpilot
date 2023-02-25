@@ -53,6 +53,9 @@ def brake_pump_hysteresis(apply_brake, apply_brake_last, last_pump_ts, ts):
   if ts - last_pump_ts < 0.2 and apply_brake > 0:
     pump_on = True
 
+  if CS.CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+    pump_on = True
+
   return pump_on, last_pump_ts
 
 

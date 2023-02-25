@@ -65,6 +65,7 @@ class CAR:
   HRV = "HONDA HRV 2019"
   ODYSSEY = "HONDA ODYSSEY 2018"
   ODYSSEY_CHN = "HONDA ODYSSEY CHN 2019"
+  ODYSSEY_HYBRID = "HONDA ODYSSEY HYBRID CHN 2022"
   ACURA_RDX = "ACURA RDX 2018"
   ACURA_RDX_3G = "ACURA RDX 2020"
   PILOT = "HONDA PILOT 2017"
@@ -123,6 +124,7 @@ for c in FINGERPRINTS:
 
 # TODO: Figure out what is relevant
 FW_VERSIONS = {
+  CAR.ODYSSEY_HYBRID: {(Ecu.esp, 0xfff, None): [b'\x00']},
   CAR.ACCORD: {
     (Ecu.programmedFuelInjection, 0x18da10f1, None): [
       b'37805-6A0-A640\x00\x00',
@@ -1324,6 +1326,7 @@ DBC = {
   CAR.HRV: dbc_dict('honda_hrv_touring_2019_can_generated', 'acura_ilx_2016_nidec'),
   CAR.ODYSSEY: dbc_dict('honda_odyssey_exl_2018_generated', 'acura_ilx_2016_nidec'),
   CAR.ODYSSEY_CHN: dbc_dict('honda_odyssey_extreme_edition_2018_china_can_generated', 'acura_ilx_2016_nidec'),
+  CAR.ODYSSEY_HYBRID: dbc_dict('honda_odyssey_hybrid_2022_china_can_generated', 'acura_ilx_2016_nidec'),
   CAR.PILOT: dbc_dict('honda_pilot_touring_2017_can_generated', 'acura_ilx_2016_nidec'),
   CAR.PILOT_2019: dbc_dict('honda_pilot_touring_2017_can_generated', 'acura_ilx_2016_nidec'),
   CAR.RIDGELINE: dbc_dict('honda_ridgeline_black_edition_2017_can_generated', 'acura_ilx_2016_nidec'),
@@ -1348,7 +1351,7 @@ SPEED_FACTOR = {
   CAR.JADE: 1.05,
 }
 
-OLD_NIDEC_LONG_CONTROL = set([CAR.ODYSSEY, CAR.ACURA_RDX, CAR.CRV, CAR.HRV])
+OLD_NIDEC_LONG_CONTROL = set([CAR.ODYSSEY, CAR.ODYSSEY_HYBRID, CAR.ACURA_RDX, CAR.CRV, CAR.HRV])
 HONDA_BOSCH = set([CAR.ACCORD, CAR.ACCORD_2021, CAR.ACCORDH, CAR.ACCORDH_2021, CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_5G, CAR.CRV_HYBRID, CAR.INSIGHT, CAR.ACURA_RDX_3G])
 HONDA_BOSCH_ALT_BRAKE_SIGNAL = set([CAR.ACCORD, CAR.ACCORD_2021, CAR.CRV_5G, CAR.ACURA_RDX_3G])
 
