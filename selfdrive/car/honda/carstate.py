@@ -147,7 +147,7 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
       ("EPB_STATUS", 50),
     ]
   elif CP.carFingerprint in (CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
-    signals += [("EPB_STATE", "EPB_STATUS", 0)]
+    signals += [("EPB_STATUS", 0)]
     checks += [("EPB_STATUS", 50)]
 
   # add gas interceptor reading if we are using it
@@ -185,7 +185,7 @@ class CarState(CarStateBase):
 
     self.main_on_sig_msg = "SCM_FEEDBACK"
     if CP.carFingerprint in (CAR.ACURA_ILX, CAR.ACURA_RDX, CAR.CRV, CAR.CRV_EU, CAR.FIT, CAR.FREED, CAR.HRV,
-                             CAR.ODYSSEY_CHN, CAR.PILOT, CAR.PILOT_2019, CAR.RIDGELINE, CAR.JADE):
+                             CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID, CAR.PILOT, CAR.PILOT_2019, CAR.RIDGELINE, CAR.JADE):
       self.main_on_sig_msg = "SCM_BUTTONS"
 
     self.shifter_values = can_define.dv[self.gearbox_msg]["GEAR_SHIFTER"]
