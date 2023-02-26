@@ -114,8 +114,8 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
       checks += [("CRUISE_PARAMS", 50)]
 
     if CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
-    signals += [("IMPERIAL_UNIT", "CAR_SPEED", 1)]
-    checks += [("CAR_SPEED", 10)]
+      signals += [("IMPERIAL_UNIT", "CAR_SPEED", 1)]
+      checks += [("CAR_SPEED", 10)]
 
   if CP.carFingerprint in (CAR.ACCORD, CAR.ACCORDH, CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_HYBRID, CAR.INSIGHT, CAR.ACURA_RDX_3G, CAR.HONDA_E):
     signals += [("DRIVERS_DOOR_OPEN", "SCM_FEEDBACK", 1)]
