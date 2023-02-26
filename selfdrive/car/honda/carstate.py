@@ -244,7 +244,7 @@ class CarState(CarStateBase):
       # dp - Rick - ignore check for crv_hybrid, loveloveses has issue with this signal.
       if self.CP.carFingerprint in (CAR.CRV_HYBRID):
         self.brake_error = 0
-      elif CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
+      elif self.CP.carFingerprint in (CAR.ODYSSEY_HYBRID,):
         self.brake_error = cp.vl["BRAKE_ERROR"]["BRAKE_ERROR_1"] or cp.vl["BRAKE_ERROR"]["BRAKE_ERROR_2"]
       else:
         self.brake_error = cp.vl["STANDSTILL"]["BRAKE_ERROR_1"] or cp.vl["STANDSTILL"]["BRAKE_ERROR_2"]
