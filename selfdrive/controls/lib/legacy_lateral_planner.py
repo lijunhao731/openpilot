@@ -10,6 +10,7 @@ from openpilot.selfdrive.controls.lib.desire_helper import DesireHelper
 import cereal.messaging as messaging
 from cereal import log
 from openpilot.common.params import Params
+from openpilot.common.conversions import Conversions as CV
 
 STEER_RATE_COST = {
   "chrysler": 0.7,
@@ -29,9 +30,11 @@ class LateralPlanner:
   def __init__(self, CP, debug=False):
     self.LP = LanePlanner()
     self.DH = DesireHelper()
-    self._dp_lat_lane_priority_mode = Params().get_bool("dp_lat_lane_priority_mode")
+    self.params = Params()
+    self._dp_lat_lane_priority_mode = self.params.get_bool("dp_lat_lane_priority_mode")
     self._dp_lat_lane_priority_mode_active = False
     self._dp_lat_lane_priority_mode_active_prev = False
+    self._dp_lat_lane_change_assist_speed = int(self.params.get("dp_lat_lane_change_assist_speed", encoding="utf-8")) * CV.MPH_TO_MS
 
     self.last_cloudlog_t = 0
     try:
@@ -71,15 +74,15 @@ class LateralPlanner:
 
     # Lane change logic
     lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
-    self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob)
+    self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob, self._dp_lat_lane_change_assist_speed)
 
     # Turn off lanes during lane change
     if self.DH.desire == log.LateralPlan.Desire.laneChangeRight or self.DH.desire == log.LateralPlan.Desire.laneChangeLeft:
       self.LP.lll_prob *= self.DH.lane_change_ll_prob
       self.LP.rll_prob *= self.DH.lane_change_ll_prob
 
-    # dp - check laneline prob when priority is on
     use_laneline = False
+    # dp - check laneline prob when priority is on
     if self._dp_lat_lane_priority_mode:
       self._update_laneless_laneline_mode()
       use_laneline = self._dp_lat_lane_priority_mode_active

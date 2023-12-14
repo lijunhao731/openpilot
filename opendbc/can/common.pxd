@@ -62,12 +62,12 @@ cdef extern from "common_dbc.h":
 
 
 cdef extern from "common.h":
-  cdef const DBC* dbc_lookup(const string)
+  cdef const DBC* dbc_lookup(const string) except +
 
   cdef cppclass CANParser:
     bool can_valid
     bool bus_timeout
-    CANParser(int, string, vector[pair[uint32_t, int]])
+    CANParser(int, string, vector[pair[uint32_t, int]]) except +
     void update_strings(vector[string]&, vector[SignalValue]&, bool) except +
 
   cdef cppclass CANPacker:

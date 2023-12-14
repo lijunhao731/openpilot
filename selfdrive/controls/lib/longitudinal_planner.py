@@ -75,10 +75,16 @@ class LongitudinalPlanner:
     self.read_param()
     self.personality = log.LongitudinalPersonality.standard
     self.dp_long_use_df_tune = False
+    self.dp_long_use_krkeegen_tune = False
 
   def read_param(self):
-    self.personality = int(self.params.get('LongitudinalPersonality'))
+    try:
+      self.personality = int(self.params.get('LongitudinalPersonality'))
+    except (ValueError, TypeError):
+      self.personality = log.LongitudinalPersonality.standard
+
     self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
+    self.dp_long_use_krkeegen_tune = self.params.get_bool('dp_long_use_krkeegen_tune')
 
   @staticmethod
   def parse_model(model_msg, model_error, v_ego, taco=False):
@@ -114,6 +120,7 @@ class LongitudinalPlanner:
 
     self.param_read_counter += 1
     if self.dynamic_endtoend_controller.is_enabled():
+      self.dynamic_endtoend_controller.set_mpc_fcw_crash_cnt(self.mpc.crash_cnt)
       self.mpc.mode = self.dynamic_endtoend_controller.get_mpc_mode(self.CP.radarUnavailable, sm['carState'], sm['radarState'].leadOne, sm['modelV2'], sm['controlsState'])
     else:
       self.mpc.mode = 'blended' if sm['controlsState'].experimentalMode else 'acc'
@@ -164,7 +171,7 @@ class LongitudinalPlanner:
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error, v_ego, taco=True)
-    self.mpc.update(sm['radarState'], v_cruise_sol, x, v, a, j, personality=self.personality, use_df_tune=self.dp_long_use_df_tune)
+    self.mpc.update(sm['radarState'], v_cruise_sol, x, v, a, j, personality=self.personality, use_df_tune=self.dp_long_use_df_tune, use_krkeegen_tune=self.dp_long_use_krkeegen_tune)
 
     self.v_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.a_solution)
